@@ -13,12 +13,18 @@ int timeLength;
 String newTimeHour = "";
 String newTimeMinute = "";
 
+int socket1 = 2;
+int socket2 = 3;
+int socket3 = 4;
+
 int status = WL_IDLE_STATUS;
 WiFiServer server(80);
 
 void setup() {
-  Serial.begin(9600);      // initialize serial communication
-  pinMode(LED_BUILTIN, OUTPUT);      // set the LED pin mode
+  Serial.begin(9600);      
+  pinMode(socket1, OUTPUT);
+  pinMode(socket2, OUTPUT);
+  pinMode(socket3, OUTPUT);      
 
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE) {
@@ -68,15 +74,27 @@ void loop() {
             client.println("Content-type:text/html");
             client.println();
 
-            // the content of the HTTP response follows the header:
-            client.print("Click <a href=\"/H\">here</a> turn the LED on pin 9 on<br>");
-            client.print("Click <a href=\"/L\">here</a> turn the LED on pin 9 off<br>");
-            client.print("Click <a href=\"/R\">here</a> to reset name<br>");
-            client.print("<br>");
-            client.print(newName);
-            client.print("<br>");
-            client.print("<form action=\"/\" method=\"get\"><input type=\"text\" name=\"name\"><input type=\"submit\"></form><br>");
-            client.print("<form action=\"/\" method=\"get\"><input type=\"time\" name=\"startTime\"><input type=\"submit\"></form><br>");
+            if (digitalRead(socket1) == LOW) {
+              client.print("Kliknij <a href=\"/socket1\">tutaj</a> aby wlaczyc 1 gniazdko<br>");
+            } else {
+              client.print("Kliknij <a href=\"/socket1\">tutaj</a> aby wylaczyc 1 gniazdko<br>");
+            }
+            if (digitalRead(socket2) == LOW) {
+              client.print("Kliknij <a href=\"/socket2\">tutaj</a> aby wlaczyc 2 gniazdko<br>");
+            } else {
+              client.print("Kliknij <a href=\"/socket2\">tutaj</a> aby wylaczyc 2 gniazdko<br>");
+            }
+            if (digitalRead(socket3) == LOW) {
+              client.print("Kliknij <a href=\"/socket3\">tutaj</a> aby wlaczyc 3 gniazdko<br>");
+            } else {
+              client.print("Kliknij <a href=\"/socket3\">tutaj</a> aby wylaczyc 3 gniazdko<br>");
+            }
+//            client.print("Kliknij <a href=\"/socket1\">tutaj</a> to reset name<br>");
+//            client.print("<br>");
+//            client.print(newName);
+//            client.print("<br>");
+//            client.print("<form action=\"/\" method=\"get\"><input type=\"text\" name=\"name\"><input type=\"submit\"></form><br>");
+            client.print("<form action=\"/\" method=\"get\"><input type=\"time\" name=\"startTime1\"><input type=\"submit\"></form><br>");
 
             // The HTTP response ends with another blank line:
             client.println();
@@ -89,13 +107,31 @@ void loop() {
           currentLine += c;      // add it to the end of the currentLine
         }
 
-        // Check to see if the client request was "GET /H" or "GET /L":
-        if (currentLine.endsWith("GET /H")) {
-          digitalWrite(LED_BUILTIN, HIGH);               // GET /H turns the LED on
+        
+        if (currentLine.endsWith("GET /socket1")) {
+          if (digitalRead(socket1) == LOW){
+            digitalWrite(socket1, HIGH);
+          } else {
+            digitalWrite(socket1, LOW);
+          }
         }
-        if (currentLine.endsWith("GET /L")) {
-          digitalWrite(LED_BUILTIN, LOW);                // GET /L turns the LED off
+        if (currentLine.endsWith("GET /socket2")) {
+          if (digitalRead(socket2) == LOW){
+            digitalWrite(socket2, HIGH);
+          } else {
+            digitalWrite(socket2, LOW);
+          }             
         }
+        if (currentLine.endsWith("GET /socket3")) {
+          if (digitalRead(socket3) == LOW){
+            digitalWrite(socket3, HIGH);
+          } else {
+            digitalWrite(socket3, LOW);
+          }                
+        }
+
+
+        
         if (currentLine.endsWith("GET /R")) {
           newName = "";                
         }
@@ -119,26 +155,28 @@ void loop() {
     }
     // close the connection:
      
-    newTimeHour = "";
-    newTimeHour += newTime.charAt(0);
-    newTimeHour += newTime.charAt(1);
+//    newTimeHour = "";
+//    newTimeHour += newTime.charAt(0);
+//    newTimeHour += newTime.charAt(1);
+//
+//    newTimeMinute = "";
+//    newTimeMinute += newTime.charAt(5);
+//    newTimeMinute += newTime.charAt(6);
+//
+//    Serial.println(newTimeHour);
+//    Serial.println(newTimeMinute);
+//    
+//    Serial.println(newName);
+//    Serial.println(nameLength);
+//    Serial.println(newTime);
+//    Serial.println(timeLength);
+//    
+//    client.print("Time: ");
+//    client.print(newTimeHour);
+//    client.print(":");
+//    client.print(newTimeMinute);
 
-    newTimeMinute = "";
-    newTimeMinute += newTime.charAt(5);
-    newTimeMinute += newTime.charAt(6);
-
-    Serial.println(newTimeHour);
-    Serial.println(newTimeMinute);
-    
-    Serial.println(newName);
-    Serial.println(nameLength);
-    Serial.println(newTime);
-    Serial.println(timeLength);
-    
-    client.print("Time: ");
-    client.print(newTimeHour);
-    client.print(":");
-    client.print(newTimeMinute);
+    Serial.println(socket1);
     
     client.stop();
     Serial.println("client disconnected");
