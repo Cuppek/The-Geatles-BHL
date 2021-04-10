@@ -1,16 +1,26 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
+#include <Time.h>
 
 #include "arduino_secrets.h" 
 char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;                 // your network key index number (needed only for WEP)
+
 String newName = "";
 int nameLength;
-String newTime = "";
-int timeLength;
-String newTimeHour = "";
-String newTimeMinute = "";
+String newTime1 = "";
+int timeLength1;
+String newTimeHour1 = "";
+String newTimeMinute1 = "";
+String newTime2 = "";
+int timeLength2;
+String newTimeHour2 = "";
+String newTimeMinute2 = "";
+String newTime3 = "";
+int timeLength3;
+String newTimeHour3 = "";
+String newTimeMinute3 = "";
 
 int socket1 = 10;
 int socket2 = 3;
@@ -51,8 +61,9 @@ void setup() {
   pinMode(sens3, INPUT);
   
   pinMode(PIR, INPUT);
-
   pinMode(LED1, OUTPUT);
+
+  
   if (WiFi.status() == WL_NO_MODULE) {
     Serial.println("Communication with WiFi module failed!");
     while (true);
@@ -134,10 +145,10 @@ void printSite() {
   client.println();
   
   client.print("<form action=\"/\" method=\"get\"><table><tr><td>Tryb pracy gniazdka nr 1:</td><td><select name=\"optionSocket1\" list=\"socket1\">");
-  client.print("<option value=\"1\">1.Reczne ustawianie gniazdek</option><option value=\"2\">2.Automatycznie po czasie</option><option value=\"3\">3.Wyznaczenie godzin pracy</option>");
+  client.print("<option value=\"1\">1.Reczne ustawianie gniazdek</option><option selected=\"selected\" value=\"2\">2.Automatycznie po czasie</option><option value=\"3\">3.Wyznaczenie godzin pracy</option>");
   client.print("</td><td><input type=\"submit\"></td></tr>");
   client.print("<tr><td>Tryb pracy gniazdka nr 2:</td><td><select name=\"optionSocket2\" list=\"socket2\">");
-  client.print("<option value=\"1\">1.Reczne ustawianie gniazdek</option><option value=\"2\">2.Automatycznie po czasie</option><option value=\"3\">3.Wyznaczenie godzin pracy</option>");
+  client.print("<option value=\"1\">1.Reczne ustawianie gniazdek</option><option value=\"2\">2.Automatycznie po czasie</option><option selected=\"selected\" value=\"3\">3.Wyznaczenie godzin pracy</option>");
   client.print("</td><td><input type=\"submit\"></td></tr>");
   client.print("<tr><td>Tryb pracy gniazdka nr 3:</td><td><select name=\"optionSocket3\" list=\"socket3\">");
   client.print("<option value=\"1\">1.Reczne ustawianie gniazdek</option><option value=\"2\">2.Automatycznie po czasie</option><option value=\"3\">3.Wyznaczenie godzin pracy</option>");
@@ -159,12 +170,12 @@ void printSite() {
     client.print("Kliknij <a href=\"/socket3\">tutaj</a> aby wylaczyc 3 gniazdko<br><br>");
   }
   
-  client.print("<form action=\"/\" method=\"get\"><table><tr><td>Czas uruchomienia gniazdka nr 1</td><td><input type=\"time\" name=\"startTime1\"></td><td><input type=\"submit\"></td></tr>");
-  client.print("<tr><td>Czas wylaczenia gniazdka nr 1</td><td><input type=\"time\" name=\"endTime1\"></td><td><input type=\"submit\"><br></td></tr>");
-  client.print("<tr><td>Czas uruchomienia gniazdka nr 2</td><td><input type=\"time\" name=\"startTime2\"></td><td><input type=\"submit\"><br></td></tr>");
-  client.print("<tr><td>Czas wylaczenia gniazdka nr 2</td><td><input type=\"time\" name=\"endTime2\"></td><td><input type=\"submit\"><br></td></tr>");
-  client.print("<tr><td>Czas uruchomienia gniazdka nr 3</td><td><input type=\"time\" name=\"startTime3\"></td><td><input type=\"submit\"><br></td></tr>");
-  client.print("<tr><td>Czas wylaczenia gniazdka nr 3</td><td><input type=\"time\" name=\"endTime3\"></td><td><input type=\"submit\"></form></td></tr>");
+  client.print("<form action=\"/\" method=\"get\"><table><tr><td>Czas uruchomienia gniazdka nr 1</td><td><input type=\"time\" name=\"startTime1\" value=\"13:30\"></td><td><input type=\"submit\"></td></tr>");
+  client.print("<tr><td>Czas wylaczenia gniazdka nr 1</td><td><input type=\"time\" name=\"endTime1\" value=\"16:30\"></td><td><input type=\"submit\"><br></td></tr>");
+  client.print("<tr><td>Czas uruchomienia gniazdka nr 2</td><td><input type=\"time\" name=\"startTime2\" value=\"22:30\"></td><td><input type=\"submit\"><br></td></tr>");
+  client.print("<tr><td>Czas wylaczenia gniazdka nr 2</td><td><input type=\"time\" name=\"endTime2\" value=\"23:12\"></td><td><input type=\"submit\"><br></td></tr>");
+  client.print("<tr><td>Czas uruchomienia gniazdka nr 3</td><td><input type=\"time\" name=\"startTime3\" value=\"05:45\"></td><td><input type=\"submit\"><br></td></tr>");
+  client.print("<tr><td>Czas wylaczenia gniazdka nr 3</td><td><input type=\"time\" name=\"endTime3\" value=\"06:30\"></td><td><input type=\"submit\"></form></td></tr>");
   
   client.println();
 }
@@ -211,12 +222,12 @@ void siteAnswer(){
     }
   }
   
-  if (currentLine.startsWith("GET /?startTime=") && currentLine.endsWith("HTTP/1.1")) {
-    newTime = "";
-    timeLength = currentLine.length();
-    timeLength -= 25;
-    for (int i = 0; i < timeLength; i++) {
-      newTime += currentLine.charAt(16 + i);
+  if (currentLine.startsWith("GET /?startTime1=") && currentLine.endsWith("HTTP/1.1")) {
+    newTime1 = "";
+    timeLength1 = currentLine.length();
+    timeLength1 -= 25;
+    for (int i = 0; i < timeLength1; i++) {
+      newTime1 += currentLine.charAt(16 + i);
     }
   }
 }
